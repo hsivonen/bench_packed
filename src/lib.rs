@@ -33,7 +33,7 @@ fn round_str_index_up(s: &str, i: usize) -> usize {
     idx
 }
 
-mod old {
+pub mod old {
     use super::*;
 
     use self::test::Bencher;
@@ -290,7 +290,7 @@ mod old {
 
 }
 
-mod packed {
+pub mod packed {
     use super::*;
 
     use self::test::Bencher;
