@@ -1,0 +1,9 @@
+[package]
+name = "bench_packed"
+version = "0.1.0"
+authors = ["Henri Sivonen <hsivonen@hsivonen.fi>"]
+edition = "2018"
+
+[dependencies]
+simd = "0.2.3"
+packed_simd = { git = "https://github.com/rust-lang-nursery/packed_simd", features = ["into_bits"] }

@@ -1,0 +1,18 @@
+Except for the src/wikipedia directory:
+
+Copyright 2015-2018 Mozilla Foundation.
+
+Licensed under the Apache License, Version 2.0
+<LICENSE-APACHE or
+https://www.apache.org/licenses/LICENSE-2.0> or the MIT
+license <LICENSE-MIT or https://opensource.org/licenses/MIT>,
+at your option. All files in the project carrying such
+notice may not be copied, modified, or distributed except
+according to those terms.
+
+For the src/wikipedia directory:
+
+The test content originating from Wikipedia is licensed under the Creative
+Commons Attribution-ShareAlike 3.0 Unported license <LICENSE-CC-BY-SA or
+https://creativecommons.org/licenses/by-sa/3.0/legalcode>. See the file
+wikipedia/sources.txt for the Wikipedia URLs.
