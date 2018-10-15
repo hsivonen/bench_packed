@@ -18,9 +18,9 @@ extern crate test;
 
 const MEM_INNER_LOOP: u64 = 500;
 
-pub const SIMD_STRIDE_SIZE: usize = 16;
+const SIMD_STRIDE_SIZE: usize = 16;
 
-pub const SIMD_ALIGNMENT_MASK: usize = 15;
+const SIMD_ALIGNMENT_MASK: usize = 15;
 
 const SIMD_ALIGNMENT: usize = 16;
 
@@ -51,7 +51,8 @@ pub mod old {
         fn x86_mm_movemask_epi8(x: i8x16) -> i32;
     }
 
-    pub fn simd_is_ascii(s: u8x16) -> bool {
+    #[inline(always)]
+    fn simd_is_ascii(s: u8x16) -> bool {
         unsafe {
             let signed: i8x16 = ::std::mem::transmute_copy(&s);
             x86_mm_movemask_epi8(signed) == 0
@@ -59,7 +60,7 @@ pub mod old {
     }
 
     #[inline(always)]
-    pub fn simd_is_str_latin1(s: u8x16) -> bool {
+    fn simd_is_str_latin1(s: u8x16) -> bool {
         if simd_is_ascii(s) {
             return true;
         }
@@ -68,7 +69,7 @@ pub mod old {
     }
 
     #[inline(always)]
-    pub fn simd_unpack(s: u8x16) -> (u16x8, u16x8) {
+    fn simd_unpack(s: u8x16) -> (u16x8, u16x8) {
         unsafe {
             let first: u8x16 = simd_shuffle16(
                 s,
@@ -150,22 +151,22 @@ pub mod old {
     }
 
     #[inline(always)]
-    pub unsafe fn load16_aligned(ptr: *const u8) -> u8x16 {
+    unsafe fn load16_aligned(ptr: *const u8) -> u8x16 {
         *(ptr as *const u8x16)
     }
 
     #[inline(always)]
-    pub unsafe fn store8_unaligned(ptr: *mut u16, s: u16x8) {
+    unsafe fn store8_unaligned(ptr: *mut u16, s: u16x8) {
         ::std::ptr::copy_nonoverlapping(&s as *const u16x8 as *const u8, ptr as *mut u8, 16);
     }
 
     #[inline(always)]
-    pub unsafe fn store8_aligned(ptr: *mut u16, s: u16x8) {
+    unsafe fn store8_aligned(ptr: *mut u16, s: u16x8) {
         *(ptr as *mut u16x8) = s;
     }
 
     #[inline(always)]
-    pub unsafe fn unpack_stride_both_aligned(src: *const u8, dst: *mut u16) {
+    unsafe fn unpack_stride_both_aligned(src: *const u8, dst: *mut u16) {
         let simd = load16_aligned(src);
         let (first, second) = simd_unpack(simd);
         store8_aligned(dst, first);
@@ -173,7 +174,7 @@ pub mod old {
     }
 
     #[inline(always)]
-    pub unsafe fn unpack_stride_src_aligned(src: *const u8, dst: *mut u16) {
+    unsafe fn unpack_stride_src_aligned(src: *const u8, dst: *mut u16) {
         let simd = load16_aligned(src);
         let (first, second) = simd_unpack(simd);
         store8_unaligned(dst, first);
@@ -181,7 +182,7 @@ pub mod old {
     }
 
     #[inline(always)]
-    pub unsafe fn unpack_latin1(src: *const u8, dst: *mut u16, len: usize) {
+    unsafe fn unpack_latin1(src: *const u8, dst: *mut u16, len: usize) {
         let unit_size = ::std::mem::size_of::<u8>();
         let mut offset = 0usize;
         if SIMD_STRIDE_SIZE <= len {
@@ -303,14 +304,14 @@ pub mod packed {
     use std::arch::x86_64::_mm_movemask_epi8;
 
     #[inline(always)]
-    pub fn simd_is_ascii(s: u8x16) -> bool {
+    fn simd_is_ascii(s: u8x16) -> bool {
         unsafe {
             _mm_movemask_epi8(__m128i::from_bits(s)) == 0
         }
     }
 
     #[inline(always)]
-    pub fn simd_is_str_latin1(s: u8x16) -> bool {
+    fn simd_is_str_latin1(s: u8x16) -> bool {
         if simd_is_ascii(s) {
             return true;
         }
@@ -319,7 +320,7 @@ pub mod packed {
     }
 
     #[inline(always)]
-    pub fn simd_unpack(s: u8x16) -> (u16x8, u16x8) {
+    fn simd_unpack(s: u8x16) -> (u16x8, u16x8) {
         unsafe {
             let first: u8x16 = shuffle!(
                 s,
@@ -401,22 +402,22 @@ pub mod packed {
     }
 
     #[inline(always)]
-    pub unsafe fn load16_aligned(ptr: *const u8) -> u8x16 {
+    unsafe fn load16_aligned(ptr: *const u8) -> u8x16 {
         *(ptr as *const u8x16)
     }
 
     #[inline(always)]
-    pub unsafe fn store8_unaligned(ptr: *mut u16, s: u16x8) {
+    unsafe fn store8_unaligned(ptr: *mut u16, s: u16x8) {
         ::std::ptr::copy_nonoverlapping(&s as *const u16x8 as *const u8, ptr as *mut u8, 16);
     }
 
     #[inline(always)]
-    pub unsafe fn store8_aligned(ptr: *mut u16, s: u16x8) {
+    unsafe fn store8_aligned(ptr: *mut u16, s: u16x8) {
         *(ptr as *mut u16x8) = s;
     }
 
     #[inline(always)]
-    pub unsafe fn unpack_stride_both_aligned(src: *const u8, dst: *mut u16) {
+    unsafe fn unpack_stride_both_aligned(src: *const u8, dst: *mut u16) {
         let simd = load16_aligned(src);
         let (first, second) = simd_unpack(simd);
         store8_aligned(dst, first);
@@ -424,7 +425,7 @@ pub mod packed {
     }
 
     #[inline(always)]
-    pub unsafe fn unpack_stride_src_aligned(src: *const u8, dst: *mut u16) {
+    unsafe fn unpack_stride_src_aligned(src: *const u8, dst: *mut u16) {
         let simd = load16_aligned(src);
         let (first, second) = simd_unpack(simd);
         store8_unaligned(dst, first);
@@ -432,7 +433,7 @@ pub mod packed {
     }
 
     #[inline(always)]
-    pub unsafe fn unpack_latin1(src: *const u8, dst: *mut u16, len: usize) {
+    unsafe fn unpack_latin1(src: *const u8, dst: *mut u16, len: usize) {
         let unit_size = ::std::mem::size_of::<u8>();
         let mut offset = 0usize;
         if SIMD_STRIDE_SIZE <= len {
